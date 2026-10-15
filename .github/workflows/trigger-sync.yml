@@ -1,0 +1,25 @@
+
+name: Trigger Data Sync
+
+on:
+  workflow_dispatch:
+  repository_dispatch:
+    types: [firebase-uploaded]
+
+permissions:
+  contents: read
+
+jobs:
+  trigger-sync:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Trigger sync workflow in target repository
+        env:
+          GH_TOKEN: ${{ secrets.TARGET_REPO_TOKEN }}
+        run: |
+          gh workflow run firebase-to-csv.yml \
+            --repo WhiteoutShare/svs \
+            --ref main
+
+          echo "Sync workflow dispatch request sent."
